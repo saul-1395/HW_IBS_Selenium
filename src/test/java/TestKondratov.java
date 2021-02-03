@@ -28,7 +28,7 @@ public class TestKondratov {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         wait = new WebDriverWait(driver, 10, 1000);
         String baseUrl = "http://www.rgs.ru";
-        String page = "https://www.rgs.ru/products/juristic_person/health/dms/index.wbp";
+
         driver.get(baseUrl);
 
 
@@ -39,15 +39,15 @@ public class TestKondratov {
     public void runTest() throws InterruptedException {
         System.out.println("start");
 
-        String btnMenu = "//a[contains(text(), 'Меню') and @class='hidden-xs']";
+        String btnMenu = "//a[contains(text(), 'Меню') and @data-toggle='dropdown']";
 
         clickButton(btnMenu);
 
-        clickButton(a_contains_text("Компаниям"));
+        clickButton(getElementContainsText("Компаниям"));
 
-        clickButton("//div[contains(@class, 'list')]" + "//*[contains(text(), '" + "Здоровье" + "')]");
+        clickButton("//div[contains(@class, 'list')]//*[contains(text(), 'Здоровье')]");
 
-        clickButton(a_contains_text("Добровольное медицинское страхование"));
+        clickButton(getElementContainsText("Добровольное медицинское страхование"));
 
         WebElement contentHeader = driver.findElement(By.xpath("//h1"));
 
@@ -55,30 +55,30 @@ public class TestKondratov {
 
         clickButton("//div[@class='rgs-main-context-bar']//*[contains(text(), 'Отправить заявку')]");
 
-        checkElementisVisible(a_contains_text("Заявка"), "Заявка на добровольное медицинское страхование");
+        checkElementisVisible(getElementContainsText("Заявка"), "Заявка на добровольное медицинское страхование");
 
-
+        //заполняем поля
         inputLabelForm("Фамилия", "Кодавр");
         inputLabelForm("Имя", "Саул");
         inputLabelForm("Отчество", "Вичевски");
 
+        //выбераем город
         WebElement citiesList = driver.findElement(By.xpath("//*[@name= 'Region']"));
         clickButton(citiesList);
         String city = "Москва";
-        clickButton("//*[@name= 'Region']" + "/option[text()='" + city + "']");
+        clickButton("//*[@name= 'Region']/option[text()='" + city + "']");
 
+        //заполняем поля
         inputLabelForm("Телефон", "9197710062");
-
         inputLabelForm("Эл. почта", "ыфвараыв");
-
         inputLabelForm("Предпочитаемая дата контакта", "12.05.2021");
 
+        //переключаемся на ввод коммента, чтобы свернулся календарь
         String textAreaCommentaries = "//label[text()='Комментарии']/../textarea";
-
         WebElement textAreaComment = driver.findElement(By.xpath(textAreaCommentaries));
-
         inputLabelForm(textAreaComment, "комментарии наши, ё маё");
 
+        //ставим галку
         WebElement iAgre = driver.findElement(By.xpath("//label[contains(text(), 'Я согласен')]"));
         iAgre.click();
 
@@ -112,19 +112,16 @@ public class TestKondratov {
     }
 
     private void elementClickable(WebElement element) {
-       // System.out.println(element.getText());
+        // System.out.println(element.getText());
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
     private void clickButton(String locate) {
         WebElement button = driver.findElement(By.xpath(locate));
         elementClickable(button);
-        try {
-            button.click();
-        } catch (Exception e) {
-            elementClickable(button);
-            button.click();
-        }
+
+        button.click();
+
     }
 
     private void clickButton(WebElement button) {
@@ -138,7 +135,7 @@ public class TestKondratov {
         }
     }
 
-    private WebElement a_contains_text(String text) {
+    private WebElement getElementContainsText(String text) {
 
         return driver.findElement(By.xpath("//*[contains(text(), '" + text + "')]"));
 
