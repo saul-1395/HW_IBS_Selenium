@@ -63,12 +63,13 @@ public class sberTest extends BaseTests {
         driver.findElement(By.xpath("//input[@id='odc-personal__phone']")).sendKeys("+79197700610");
         sleep(3000);
 
-        //
+        //нажимаем кнопку Далее
         WebElement buttonContinious = driver.findElement(By.xpath("//span[text()='Далее']/.."));
         wait.until(ExpectedConditions.elementToBeClickable(buttonContinious));
         buttonContinious.click();
         sleep(1000);
 
+        //берем из незаполненых полей алерты
         String fieldSerial = getAllertFromInputForm("Серия");
         String fieldNumber = getAllertFromInputForm("Номер");
 
@@ -76,15 +77,15 @@ public class sberTest extends BaseTests {
         WebElement fieldTypeDate = driver.findElement(By.xpath("//label[text()='" + fieldType + "']/../div[2]"));
         String fieldDate = fieldTypeDate.getText();
 
-        sleep(5000);
 
+        //проверяем, что алерты соответствуют ожиданиям
         Assertions.assertAll("fields",  () -> Assertions.assertEquals(fieldDate, "Обязательное поле"),
                                                 () -> Assertions.assertEquals(fieldNumber, "Обязательное поле"),
                                                 () -> Assertions.assertEquals(fieldSerial, "Обязательное поле"));
 
     }
 
-
+    //метод для получения текста из алертов у форм
     private String getAllertFromInputForm(String formName) {
         WebElement element = driver.findElement(By.xpath("//label[text()='" + formName + "']/../div"));
         String alert = element.getText();
